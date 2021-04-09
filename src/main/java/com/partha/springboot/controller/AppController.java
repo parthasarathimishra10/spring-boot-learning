@@ -5,10 +5,14 @@ import com.partha.springboot.bean.User;
 import com.partha.springboot.dao.UserDao;
 import com.partha.springboot.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.LocaleContextResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.Servlet;
@@ -22,9 +26,17 @@ public class AppController {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @GetMapping("/hello-world/{name}")
     public HelloWorldBean helloWorld(@PathVariable String name){
         return new HelloWorldBean("Hello, "+ name + "!!!!");
+    }
+
+    @GetMapping("/hello-world-i18n")
+    public String helloWorld(){
+        return messageSource.getMessage("good.morning", null, LocaleContextHolder.getLocale());
     }
 
     @GetMapping("/users")
@@ -38,6 +50,7 @@ public class AppController {
         if(user == null)
             throw new UserNotFoundException("User not found for Id : "+userId);
 
+        //HATEOAS Implementation
         EntityModel<User> resource = EntityModel.of(user);
         WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsers());
         resource.add(linkTo.withRel("all-users"));
