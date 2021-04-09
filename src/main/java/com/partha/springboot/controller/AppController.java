@@ -4,6 +4,10 @@ import com.partha.springboot.bean.HelloWorldBean;
 import com.partha.springboot.bean.User;
 import com.partha.springboot.dao.UserDao;
 import com.partha.springboot.exception.UserNotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -11,15 +15,12 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.LocaleContextResolver;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.Servlet;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-
+@Api(value = "UserAppController")
 @RestController
 public class AppController {
 
@@ -29,6 +30,13 @@ public class AppController {
     @Autowired
     private MessageSource messageSource;
 
+    @ApiOperation(value = "Get Hello World with Name", response = String.class, tags = "hello-world-swagger-doc")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
     @GetMapping("/hello-world/{name}")
     public HelloWorldBean helloWorld(@PathVariable String name){
         return new HelloWorldBean("Hello, "+ name + "!!!!");
