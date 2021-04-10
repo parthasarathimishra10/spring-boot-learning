@@ -30,6 +30,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
 		<!--Disabling this to ease the learning process
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -58,6 +62,10 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 		</dependency>
 		<!-- The below dependency is used for content negotiation(in xml format by mentioning it in Accept request header).
 			 Commenting this out because by default browser sends the Accept header as application/xml format which might case problem.
