@@ -30,14 +30,14 @@ public class UserDao {
 
     }
 
-    public User addUser(User user){
+    public void addUser(User user){
         if(user.getId() == null){
             count++;
             user.setId(count);
         }
 
         userList.add(user);
-        return user;
+
     }
 
     public void removeUser(Integer id){
