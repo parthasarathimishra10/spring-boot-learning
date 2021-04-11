@@ -1,17 +1,14 @@
 package com.partha.springboot.controller;
 
-import com.partha.springboot.bean.HelloWorldBean;
-import com.partha.springboot.bean.User;
+import com.partha.springboot.entities.Post;
 import com.partha.springboot.exception.UserNotFoundException;
-import com.partha.springboot.model.Employee;
+import com.partha.springboot.entities.Employee;
 import com.partha.springboot.repository.EmployeeRepository;
+import com.partha.springboot.repository.PostRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +27,9 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private MessageSource messageSource;
@@ -66,6 +66,26 @@ public class EmployeeController {
         if(employeeRepository.findById(id).isPresent())
             employeeRepository.deleteById(id);
         else
-            throw new UserNotFoundException("User not found for Id : " + id);
+            throw new UserNotFoundException("Employee not found for Id : " + id);
+    }
+
+    @GetMapping("/employees/{id}/posts")
+    public List<Post> getAllPostsByEmployeeId(@PathVariable Integer id){
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if(!employee.isPresent())
+            throw new UserNotFoundException("Employee not found for Id : " + id);
+        return employee.get().getPosts();
+    }
+
+    @PostMapping("/employees/{id}/posts")
+    public ResponseEntity<Object> createPostsByEmployeeId(@PathVariable Integer id, @RequestBody Post post){
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if(!employee.isPresent())
+            throw new UserNotFoundException("Employee not found for Id : " + id);
+        post.setEmployee(employee.get());
+        Post savedPost = postRepository.save(post);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(savedPost.getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 }
